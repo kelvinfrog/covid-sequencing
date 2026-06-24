@@ -1,0 +1,18 @@
+# Raw sequencing data — large files, re-downloadable from SRA
+data/raw/
+
+# Per-sample pipeline intermediates — large, reproducible
+data/results/*/trimmed/
+data/results/*/aligned/
+data/results/*/variants/
+
+# Freyja internal staging files
+data/results/_aggregate/
+data/results/_times_metadata.csv
+data/results/all_samples_aggregated_timed.tsv
+
+# Stray SRA download folders (prefetch sometimes leaves these in project root)
+SRR*/
+
+# macOS
+.DS_Store

@@ -1,0 +1,310 @@
+[Wed Jun 24 10:06:04 PDT 2026] Starting pipeline for sample: SRR23879090
+[Wed Jun 24 10:06:04 PDT 2026] Step 1/6 — Adapter trimming (fastp)
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Detecting adapter sequence for read2...
+No adapter detected for read2
+
+Read1 before filtering:
+total reads: 921197
+total bases: 83383513
+Q20 bases: 77612451(93.0789%)
+Q30 bases: 71618528(85.8905%)
+Q40 bases: 0(0%)
+
+Read2 before filtering:
+total reads: 921197
+total bases: 83433716
+Q20 bases: 76526377(91.7212%)
+Q30 bases: 70191933(84.129%)
+Q40 bases: 0(0%)
+
+Read1 after filtering:
+total reads: 835270
+total bases: 79455212
+Q20 bases: 74236770(93.4322%)
+Q30 bases: 68567016(86.2964%)
+Q40 bases: 0(0%)
+
+Read2 after filtering:
+total reads: 835270
+total bases: 79423342
+Q20 bases: 73233525(92.2066%)
+Q30 bases: 67229669(84.6472%)
+Q40 bases: 0(0%)
+
+Filtering result:
+reads passed filter: 1670540
+reads failed due to low quality: 19738
+reads failed due to too many N: 17908
+reads failed due to too short: 134208
+reads failed due to adapter dimer: 0
+reads with adapter trimmed: 22778
+bases trimmed due to adapters: 146968
+
+Duplication rate: 14.7855%
+
+Insert size peak (evaluated by paired-end reads): 41
+
+JSON report: data/results/SRR23879090/trimmed/SRR23879090_fastp.json
+HTML report: data/results/SRR23879090/trimmed/SRR23879090_fastp.html
+
+fastp --in1 data/raw/SRR23879090_R1.fastq.gz --in2 data/raw/SRR23879090_R2.fastq.gz --out1 data/results/SRR23879090/trimmed/SRR23879090_R1.fastq.gz --out2 data/results/SRR23879090/trimmed/SRR23879090_R2.fastq.gz --json data/results/SRR23879090/trimmed/SRR23879090_fastp.json --html data/results/SRR23879090/trimmed/SRR23879090_fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 --detect_adapter_for_pe 
+fastp v1.1.0, time used: 15 seconds
+[Wed Jun 24 10:06:19 PDT 2026] Step 2/6 — Alignment (minimap2)
+[M::mm_idx_gen::0.001*2.33] collected minimizers
+[M::mm_idx_gen::0.002*2.86] sorted minimizers
+[M::main::0.002*2.83] loaded/built the index for 1 target sequence(s)
+[M::mm_mapopt_update::0.002*2.83] mid_occ = 1000
+[M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 1
+[M::mm_idx_stat::0.002*2.73] distinct minimizers: 4989 (99.98% are singletons); average occurrences: 1.002; average spacing: 5.979; total length: 29903
+[M::worker_pipeline::0.961*3.00] mapped 524128 sequences
+[M::worker_pipeline::1.410*3.51] mapped 524936 sequences
+[M::worker_pipeline::1.844*3.46] mapped 527774 sequences
+[M::worker_pipeline::1.882*3.41] mapped 93702 sequences
+[M::main] Version: 2.31-r1302
+[M::main] CMD: minimap2 -ax sr -t 4 /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR23879090/trimmed/SRR23879090_R1.fastq.gz data/results/SRR23879090/trimmed/SRR23879090_R2.fastq.gz
+[M::main] Real time: 1.883 sec; CPU: 6.425 sec; Peak RSS: 0.433 GB
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 10:06:23 PDT 2026] Step 3/6 — Primer trimming (ivar trim)
+Found 209 primers in BED file
+Reading from data/results/SRR23879090/aligned/SRR23879090.sorted.bam
+
+-------
+Results: 
+Primer Name	Read Count
+SARS-CoV-2_1_LEFT	0
+SARS-CoV-2_2_LEFT	241
+SARS-CoV-2_1_RIGHT	60
+SARS-CoV-2_3_LEFT	251
+SARS-CoV-2_2_RIGHT	456
+SARS-CoV-2_4_LEFT	739
+SARS-CoV-2_3_RIGHT	302
+SARS-CoV-2_5_LEFT	214
+SARS-CoV-2_4_RIGHT	958
+SARS-CoV-2_6_LEFT	1372
+SARS-CoV-2_5_RIGHT	237
+SARS-CoV-2_7_LEFT	3206
+SARS-CoV-2_6_RIGHT	1299
+SARS-CoV-2_8_LEFT	323
+SARS-CoV-2_7_RIGHT	1738
+SARS-CoV-2_9_LEFT	772
+SARS-CoV-2_8_RIGHT	107
+SARS-CoV-2_10_LEFT_alt1	70
+SARS-CoV-2_10_LEFT	2
+SARS-CoV-2_9_RIGHT	574
+SARS-CoV-2_11_LEFT	258
+SARS-CoV-2_10_RIGHT_alt1	62
+SARS-CoV-2_10_RIGHT	118
+SARS-CoV-2_12_LEFT	353
+SARS-CoV-2_11_RIGHT	253
+SARS-CoV-2_13_LEFT	322
+SARS-CoV-2_12_RIGHT	507
+SARS-CoV-2_14_LEFT	28
+SARS-CoV-2_13_RIGHT	172
+SARS-CoV-2_15_LEFT	0
+SARS-CoV-2_14_RIGHT	0
+SARS-CoV-2_16_LEFT	0
+SARS-CoV-2_15_RIGHT	0
+SARS-CoV-2_17_LEFT	67
+SARS-CoV-2_16_RIGHT	4
+SARS-CoV-2_18_LEFT	36
+SARS-CoV-2_17_RIGHT	191
+SARS-CoV-2_19_LEFT	1403
+SARS-CoV-2_18_RIGHT	151
+SARS-CoV-2_20_LEFT	164
+SARS-CoV-2_19_RIGHT	901
+SARS-CoV-2_21_LEFT	20
+SARS-CoV-2_20_RIGHT	34
+SARS-CoV-2_22_LEFT	3
+SARS-CoV-2_21_RIGHT	11
+SARS-CoV-2_23_LEFT	15
+SARS-CoV-2_22_RIGHT	6
+SARS-CoV-2_24_LEFT	42
+SARS-CoV-2_23_RIGHT	15
+SARS-CoV-2_23_RIGHT_alt1	4
+SARS-CoV-2_25_LEFT	0
+SARS-CoV-2_24_RIGHT	40
+SARS-CoV-2_26_LEFT	0
+SARS-CoV-2_25_RIGHT	0
+SARS-CoV-2_27_LEFT	0
+SARS-CoV-2_26_RIGHT	0
+SARS-CoV-2_28_LEFT	385
+SARS-CoV-2_27_RIGHT_alt1	29
+SARS-CoV-2_27_RIGHT	4
+SARS-CoV-2_29_LEFT	58
+SARS-CoV-2_28_RIGHT	312
+SARS-CoV-2_30_LEFT	24
+SARS-CoV-2_29_RIGHT	3
+SARS-CoV-2_31_LEFT	16
+SARS-CoV-2_30_RIGHT	34
+SARS-CoV-2_32_LEFT	950
+SARS-CoV-2_31_RIGHT	156
+SARS-CoV-2_33_LEFT	48
+SARS-CoV-2_32_RIGHT	490
+SARS-CoV-2_34_LEFT	352
+SARS-CoV-2_33_RIGHT	82
+SARS-CoV-2_35_LEFT	108
+SARS-CoV-2_34_RIGHT	557
+SARS-CoV-2_36_LEFT	510
+SARS-CoV-2_35_RIGHT	147
+SARS-CoV-2_37_LEFT	161
+SARS-CoV-2_36_RIGHT	203
+SARS-CoV-2_38_LEFT	2482
+SARS-CoV-2_37_RIGHT	590
+SARS-CoV-2_39_LEFT	112
+SARS-CoV-2_38_RIGHT	1088
+SARS-CoV-2_40_LEFT	1784
+SARS-CoV-2_39_RIGHT	197
+SARS-CoV-2_41_LEFT	310
+SARS-CoV-2_40_RIGHT	1738
+SARS-CoV-2_42_LEFT	430
+SARS-CoV-2_41_RIGHT	114
+SARS-CoV-2_43_LEFT	419
+SARS-CoV-2_42_RIGHT	412
+SARS-CoV-2_44_LEFT	3925
+SARS-CoV-2_43_RIGHT	1691
+SARS-CoV-2_45_LEFT	331
+SARS-CoV-2_44_RIGHT	4085
+SARS-CoV-2_46_LEFT	994
+SARS-CoV-2_45_RIGHT	501
+SARS-CoV-2_47_LEFT	540
+SARS-CoV-2_46_RIGHT	1042
+SARS-CoV-2_48_LEFT	1169
+SARS-CoV-2_47_RIGHT	411
+SARS-CoV-2_49_LEFT	85
+SARS-CoV-2_48_RIGHT	995
+SARS-CoV-2_50_LEFT	420
+SARS-CoV-2_49_RIGHT	46
+SARS-CoV-2_51_LEFT	137
+SARS-CoV-2_50_RIGHT	221
+SARS-CoV-2_52_LEFT	6648
+SARS-CoV-2_51_RIGHT	729
+SARS-CoV-2_53_LEFT	1817
+SARS-CoV-2_52_RIGHT	10838
+SARS-CoV-2_54_LEFT	2341
+SARS-CoV-2_53_RIGHT	1137
+SARS-CoV-2_55_LEFT	737
+SARS-CoV-2_54_RIGHT	1279
+SARS-CoV-2_56_LEFT	2668
+SARS-CoV-2_55_RIGHT	993
+SARS-CoV-2_57_LEFT	2541
+SARS-CoV-2_56_RIGHT	4986
+SARS-CoV-2_58_LEFT	9244
+SARS-CoV-2_57_RIGHT	954
+SARS-CoV-2_59_LEFT	1941
+SARS-CoV-2_58_RIGHT	6223
+SARS-CoV-2_60_LEFT	122
+SARS-CoV-2_59_RIGHT	259
+SARS-CoV-2_61_LEFT	101
+SARS-CoV-2_60_RIGHT	17
+SARS-CoV-2_62_LEFT	3177
+SARS-CoV-2_61_RIGHT	587
+SARS-CoV-2_63_LEFT	925
+SARS-CoV-2_62_RIGHT	1675
+SARS-CoV-2_64_LEFT	126
+SARS-CoV-2_63_RIGHT	590
+SARS-CoV-2_65_LEFT	827
+SARS-CoV-2_64_RIGHT	220
+SARS-CoV-2_66_LEFT	39
+SARS-CoV-2_65_RIGHT	243
+SARS-CoV-2_67_LEFT	0
+SARS-CoV-2_66_RIGHT	0
+SARS-CoV-2_68_LEFT	149
+SARS-CoV-2_67_RIGHT	47
+SARS-CoV-2_69_LEFT	103
+SARS-CoV-2_68_RIGHT	281
+SARS-CoV-2_70_LEFT	249
+SARS-CoV-2_69_RIGHT	37
+SARS-CoV-2_71_LEFT	55
+SARS-CoV-2_70_RIGHT	310
+SARS-CoV-2_72_LEFT	1043
+SARS-CoV-2_71_RIGHT	492
+SARS-CoV-2_73_LEFT	22
+SARS-CoV-2_72_RIGHT	1059
+SARS-CoV-2_74_LEFT	13
+SARS-CoV-2_73_RIGHT	11
+SARS-CoV-2_75_LEFT	36
+SARS-CoV-2_74_RIGHT	9
+SARS-CoV-2_76_LEFT	12
+SARS-CoV-2_76_LEFT_alt1	74
+SARS-CoV-2_75_RIGHT	16
+SARS-CoV-2_77_LEFT	31
+SARS-CoV-2_76_RIGHT	90
+SARS-CoV-2_76_RIGHT_alt1	22
+SARS-CoV-2_78_LEFT	568
+SARS-CoV-2_77_RIGHT	190
+SARS-CoV-2_79_LEFT	183
+SARS-CoV-2_78_RIGHT	836
+SARS-CoV-2_80_LEFT	4
+SARS-CoV-2_79_RIGHT_alt1	25
+SARS-CoV-2_79_RIGHT	0
+SARS-CoV-2_81_LEFT	124
+SARS-CoV-2_80_RIGHT	27
+SARS-CoV-2_82_LEFT	1771
+SARS-CoV-2_81_RIGHT	637
+SARS-CoV-2_83_LEFT	527
+SARS-CoV-2_82_RIGHT	1224
+SARS-CoV-2_84_LEFT	2380
+SARS-CoV-2_83_RIGHT	634
+SARS-CoV-2_85_LEFT	890
+SARS-CoV-2_84_RIGHT	1338
+SARS-CoV-2_86_LEFT	32
+SARS-CoV-2_85_RIGHT	53
+SARS-CoV-2_87_LEFT	325
+SARS-CoV-2_86_RIGHT	172
+SARS-CoV-2_88_LEFT_alt1	189
+SARS-CoV-2_88_LEFT	166
+SARS-CoV-2_87_RIGHT	1453
+SARS-CoV-2_89_LEFT	0
+SARS-CoV-2_89_LEFT_alt1	1431
+SARS-CoV-2_88_RIGHT	45
+SARS-CoV-2_90_LEFT	193
+SARS-CoV-2_89_RIGHT	938
+SARS-CoV-2_89_RIGHT_alt1	66
+SARS-CoV-2_91_LEFT	0
+SARS-CoV-2_90_RIGHT_alt1	0
+SARS-CoV-2_90_RIGHT	0
+SARS-CoV-2_92_LEFT	10
+SARS-CoV-2_91_RIGHT	0
+SARS-CoV-2_93_LEFT	711
+SARS-CoV-2_92_RIGHT	214
+SARS-CoV-2_94_LEFT	178
+SARS-CoV-2_93_RIGHT	520
+SARS-CoV-2_95_LEFT	1709
+SARS-CoV-2_94_RIGHT	608
+SARS-CoV-2_96_LEFT	1172
+SARS-CoV-2_95_RIGHT	2114
+SARS-CoV-2_97_LEFT	94
+SARS-CoV-2_96_RIGHT	492
+SARS-CoV-2_98_LEFT	266
+SARS-CoV-2_97_RIGHT	48
+SARS-CoV-2_99_LEFT	16
+SARS-CoV-2_98_RIGHT	315
+SARS-CoV-2_99_RIGHT	0
+
+Trimmed primers from 23.83% (127836) of reads.
+14.96% (80249) of reads were quality trimmed below the minimum length of 50 bp and were not written to file.
+66.76% (358140) of reads that started outside of primer regions were not written to file
+1134380 unmapped reads were not written to file.
+20.43% (109589) of reads had their insert size smaller than their read length
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 10:06:28 PDT 2026] Step 4/6 — Alignment statistics
+[Wed Jun 24 10:06:28 PDT 2026] Step 5/6 — Variant calling + depth (freyja variants)
+samtools mpileup -aa -A -d 600000 -Q 20 -q 0 -B -f /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR23879090/aligned/SRR23879090.trimmed.sorted.bam | tee >(cut -f1-4 > data/results/SRR23879090/variants/SRR23879090.depths.tsv) | ivar variants -p data/results/SRR23879090/variants/SRR23879090 -q 20 -t 0.0 -r /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta
+[mpileup] 1 samples in 1 input files
+[Wed Jun 24 10:06:32 PDT 2026] Step 6/6 — Lineage demixing (freyja demix)
+/opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/sample_deconv.py:201: UserWarning: Solution may be inaccurate. Try another solver, adjusting the solver settings, or solve with verbose=True for more information.
+  prob.solve(verbose=verbose, solver=solver_, **solver_kwargs)
+building mix/depth matrices
+demixing
+[Wed Jun 24 10:06:37 PDT 2026] Done. Results → data/results/SRR23879090/SRR23879090.freyja.tsv
+
+── Lineage summary ──────────────────────────────────────────────────────
+	data/results/SRR23879090/variants/SRR23879090.tsv
+summarized	[('Omicron', 0.998998213006167)]
+lineages	BF.25 XAN BA.5.5 BA.5.1 BA.5.1.17 BA.5.1.24 BA.5.1.14 BA.5.1.12 BA.5.1.35 BA.5.1.23 BA.5.1.30 BA.5.1.2 BA.5.1.16 BA.5.1.28 BA.5.1.25 BA.5.1.10 BA.5.1.19 BA.5.1.29 DJ.1 BK.1 BA.5.1.20 BA.5
+abundances	0.46643199 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030 0.02536030
+resid	2.1863465999460403
+coverage	35.979667591880414

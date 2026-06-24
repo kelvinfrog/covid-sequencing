@@ -1,0 +1,307 @@
+[Wed Jun 24 09:19:44 PDT 2026] Starting pipeline for sample: SRR39226698
+[Wed Jun 24 09:19:44 PDT 2026] Step 1/6 — Adapter trimming (fastp)
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Detecting adapter sequence for read2...
+No adapter detected for read2
+
+Read1 before filtering:
+total reads: 511754
+total bases: 32249132
+Q20 bases: 30943822(95.9524%)
+Q30 bases: 30364394(94.1557%)
+Q40 bases: 0(0%)
+
+Read2 before filtering:
+total reads: 511754
+total bases: 32083317
+Q20 bases: 30572306(95.2904%)
+Q30 bases: 30090363(93.7882%)
+Q40 bases: 0(0%)
+
+Read1 after filtering:
+total reads: 203290
+total bases: 18352280
+Q20 bases: 18260464(99.4997%)
+Q30 bases: 17888166(97.4711%)
+Q40 bases: 0(0%)
+
+Read2 after filtering:
+total reads: 203290
+total bases: 18078154
+Q20 bases: 17989141(99.5076%)
+Q30 bases: 17778146(98.3405%)
+Q40 bases: 0(0%)
+
+Filtering result:
+reads passed filter: 406580
+reads failed due to low quality: 66860
+reads failed due to too many N: 112
+reads failed due to too short: 549956
+reads failed due to adapter dimer: 0
+reads with adapter trimmed: 14852
+bases trimmed due to adapters: 786120
+
+Duplication rate: 86.7892%
+
+Insert size peak (evaluated by paired-end reads): 52
+
+JSON report: data/results/SRR39226698/trimmed/SRR39226698_fastp.json
+HTML report: data/results/SRR39226698/trimmed/SRR39226698_fastp.html
+
+fastp --in1 data/raw/SRR39226698_R1.fastq.gz --in2 data/raw/SRR39226698_R2.fastq.gz --out1 data/results/SRR39226698/trimmed/SRR39226698_R1.fastq.gz --out2 data/results/SRR39226698/trimmed/SRR39226698_R2.fastq.gz --json data/results/SRR39226698/trimmed/SRR39226698_fastp.json --html data/results/SRR39226698/trimmed/SRR39226698_fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 --detect_adapter_for_pe 
+fastp v1.1.0, time used: 8 seconds
+[Wed Jun 24 09:19:52 PDT 2026] Step 2/6 — Alignment (minimap2)
+[M::mm_idx_gen::0.001*2.95] collected minimizers
+[M::mm_idx_gen::0.002*3.21] sorted minimizers
+[M::main::0.002*3.18] loaded/built the index for 1 target sequence(s)
+[M::mm_mapopt_update::0.002*3.18] mid_occ = 1000
+[M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 1
+[M::mm_idx_stat::0.002*3.06] distinct minimizers: 4989 (99.98% are singletons); average occurrences: 1.002; average spacing: 5.979; total length: 29903
+[M::worker_pipeline::0.872*2.32] mapped 406580 sequences
+[M::main] Version: 2.31-r1302
+[M::main] CMD: minimap2 -ax sr -t 4 /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR39226698/trimmed/SRR39226698_R1.fastq.gz data/results/SRR39226698/trimmed/SRR39226698_R2.fastq.gz
+[M::main] Real time: 0.873 sec; CPU: 2.023 sec; Peak RSS: 0.153 GB
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 09:19:53 PDT 2026] Step 3/6 — Primer trimming (ivar trim)
+Found 209 primers in BED file
+Reading from data/results/SRR39226698/aligned/SRR39226698.sorted.bam
+
+-------
+Results: 
+Primer Name	Read Count
+SARS-CoV-2_1_LEFT	7
+SARS-CoV-2_2_LEFT	1
+SARS-CoV-2_1_RIGHT	0
+SARS-CoV-2_3_LEFT	0
+SARS-CoV-2_2_RIGHT	0
+SARS-CoV-2_4_LEFT	94
+SARS-CoV-2_3_RIGHT	130
+SARS-CoV-2_5_LEFT	0
+SARS-CoV-2_4_RIGHT	2
+SARS-CoV-2_6_LEFT	0
+SARS-CoV-2_5_RIGHT	0
+SARS-CoV-2_7_LEFT	0
+SARS-CoV-2_6_RIGHT	0
+SARS-CoV-2_8_LEFT	0
+SARS-CoV-2_7_RIGHT	62
+SARS-CoV-2_9_LEFT	0
+SARS-CoV-2_8_RIGHT	0
+SARS-CoV-2_10_LEFT_alt1	59
+SARS-CoV-2_10_LEFT	0
+SARS-CoV-2_9_RIGHT	2
+SARS-CoV-2_11_LEFT	0
+SARS-CoV-2_10_RIGHT_alt1	1521
+SARS-CoV-2_10_RIGHT	0
+SARS-CoV-2_12_LEFT	0
+SARS-CoV-2_11_RIGHT	0
+SARS-CoV-2_13_LEFT	0
+SARS-CoV-2_12_RIGHT	0
+SARS-CoV-2_14_LEFT	25
+SARS-CoV-2_13_RIGHT	0
+SARS-CoV-2_15_LEFT	0
+SARS-CoV-2_14_RIGHT	0
+SARS-CoV-2_16_LEFT	0
+SARS-CoV-2_15_RIGHT	0
+SARS-CoV-2_17_LEFT	10
+SARS-CoV-2_16_RIGHT	0
+SARS-CoV-2_18_LEFT	100
+SARS-CoV-2_17_RIGHT	0
+SARS-CoV-2_19_LEFT	0
+SARS-CoV-2_18_RIGHT	739
+SARS-CoV-2_20_LEFT	0
+SARS-CoV-2_19_RIGHT	0
+SARS-CoV-2_21_LEFT	442
+SARS-CoV-2_20_RIGHT	0
+SARS-CoV-2_22_LEFT	0
+SARS-CoV-2_21_RIGHT	0
+SARS-CoV-2_23_LEFT	285
+SARS-CoV-2_22_RIGHT	1
+SARS-CoV-2_24_LEFT	0
+SARS-CoV-2_23_RIGHT	0
+SARS-CoV-2_23_RIGHT_alt1	0
+SARS-CoV-2_25_LEFT	8
+SARS-CoV-2_24_RIGHT	0
+SARS-CoV-2_26_LEFT	0
+SARS-CoV-2_25_RIGHT	0
+SARS-CoV-2_27_LEFT	355
+SARS-CoV-2_26_RIGHT	0
+SARS-CoV-2_28_LEFT	0
+SARS-CoV-2_27_RIGHT_alt1	0
+SARS-CoV-2_27_RIGHT	0
+SARS-CoV-2_29_LEFT	0
+SARS-CoV-2_28_RIGHT	0
+SARS-CoV-2_30_LEFT	439
+SARS-CoV-2_29_RIGHT	1
+SARS-CoV-2_31_LEFT	427
+SARS-CoV-2_30_RIGHT	1
+SARS-CoV-2_32_LEFT	0
+SARS-CoV-2_31_RIGHT	0
+SARS-CoV-2_33_LEFT	0
+SARS-CoV-2_32_RIGHT	0
+SARS-CoV-2_34_LEFT	0
+SARS-CoV-2_33_RIGHT	0
+SARS-CoV-2_35_LEFT	0
+SARS-CoV-2_34_RIGHT	0
+SARS-CoV-2_36_LEFT	56
+SARS-CoV-2_35_RIGHT	0
+SARS-CoV-2_37_LEFT	1
+SARS-CoV-2_36_RIGHT	8
+SARS-CoV-2_38_LEFT	0
+SARS-CoV-2_37_RIGHT	1809
+SARS-CoV-2_39_LEFT	0
+SARS-CoV-2_38_RIGHT	0
+SARS-CoV-2_40_LEFT	1
+SARS-CoV-2_39_RIGHT	4
+SARS-CoV-2_41_LEFT	0
+SARS-CoV-2_40_RIGHT	0
+SARS-CoV-2_42_LEFT	0
+SARS-CoV-2_41_RIGHT	576
+SARS-CoV-2_43_LEFT	0
+SARS-CoV-2_42_RIGHT	0
+SARS-CoV-2_44_LEFT	0
+SARS-CoV-2_43_RIGHT	0
+SARS-CoV-2_45_LEFT	0
+SARS-CoV-2_44_RIGHT	0
+SARS-CoV-2_46_LEFT	0
+SARS-CoV-2_45_RIGHT	0
+SARS-CoV-2_47_LEFT	0
+SARS-CoV-2_46_RIGHT	0
+SARS-CoV-2_48_LEFT	0
+SARS-CoV-2_47_RIGHT	0
+SARS-CoV-2_49_LEFT	0
+SARS-CoV-2_48_RIGHT	0
+SARS-CoV-2_50_LEFT	0
+SARS-CoV-2_49_RIGHT	44
+SARS-CoV-2_51_LEFT	0
+SARS-CoV-2_50_RIGHT	0
+SARS-CoV-2_52_LEFT	0
+SARS-CoV-2_51_RIGHT	0
+SARS-CoV-2_53_LEFT	230
+SARS-CoV-2_52_RIGHT	0
+SARS-CoV-2_54_LEFT	366
+SARS-CoV-2_53_RIGHT	0
+SARS-CoV-2_55_LEFT	99
+SARS-CoV-2_54_RIGHT	2
+SARS-CoV-2_56_LEFT	0
+SARS-CoV-2_55_RIGHT	604
+SARS-CoV-2_57_LEFT	0
+SARS-CoV-2_56_RIGHT	0
+SARS-CoV-2_58_LEFT	1
+SARS-CoV-2_57_RIGHT	0
+SARS-CoV-2_59_LEFT	0
+SARS-CoV-2_58_RIGHT	327
+SARS-CoV-2_60_LEFT	0
+SARS-CoV-2_59_RIGHT	0
+SARS-CoV-2_61_LEFT	1288
+SARS-CoV-2_60_RIGHT	0
+SARS-CoV-2_62_LEFT	0
+SARS-CoV-2_61_RIGHT	0
+SARS-CoV-2_63_LEFT	89
+SARS-CoV-2_62_RIGHT	0
+SARS-CoV-2_64_LEFT	0
+SARS-CoV-2_63_RIGHT	0
+SARS-CoV-2_65_LEFT	0
+SARS-CoV-2_64_RIGHT	0
+SARS-CoV-2_66_LEFT	0
+SARS-CoV-2_65_RIGHT	0
+SARS-CoV-2_67_LEFT	0
+SARS-CoV-2_66_RIGHT	53
+SARS-CoV-2_68_LEFT	14
+SARS-CoV-2_67_RIGHT	2360
+SARS-CoV-2_69_LEFT	0
+SARS-CoV-2_68_RIGHT	17
+SARS-CoV-2_70_LEFT	0
+SARS-CoV-2_69_RIGHT	0
+SARS-CoV-2_71_LEFT	11
+SARS-CoV-2_70_RIGHT	6
+SARS-CoV-2_72_LEFT	0
+SARS-CoV-2_71_RIGHT	0
+SARS-CoV-2_73_LEFT	415
+SARS-CoV-2_72_RIGHT	0
+SARS-CoV-2_74_LEFT	114
+SARS-CoV-2_73_RIGHT	0
+SARS-CoV-2_75_LEFT	0
+SARS-CoV-2_74_RIGHT	0
+SARS-CoV-2_76_LEFT	0
+SARS-CoV-2_76_LEFT_alt1	9
+SARS-CoV-2_75_RIGHT	0
+SARS-CoV-2_77_LEFT	476
+SARS-CoV-2_76_RIGHT	0
+SARS-CoV-2_76_RIGHT_alt1	2
+SARS-CoV-2_78_LEFT	0
+SARS-CoV-2_77_RIGHT	1
+SARS-CoV-2_79_LEFT	0
+SARS-CoV-2_78_RIGHT	0
+SARS-CoV-2_80_LEFT	3
+SARS-CoV-2_79_RIGHT_alt1	0
+SARS-CoV-2_79_RIGHT	0
+SARS-CoV-2_81_LEFT	14
+SARS-CoV-2_80_RIGHT	216
+SARS-CoV-2_82_LEFT	0
+SARS-CoV-2_81_RIGHT	0
+SARS-CoV-2_83_LEFT	0
+SARS-CoV-2_82_RIGHT	0
+SARS-CoV-2_84_LEFT	0
+SARS-CoV-2_83_RIGHT	0
+SARS-CoV-2_85_LEFT	0
+SARS-CoV-2_84_RIGHT	0
+SARS-CoV-2_86_LEFT	798
+SARS-CoV-2_85_RIGHT	83
+SARS-CoV-2_87_LEFT	0
+SARS-CoV-2_86_RIGHT	306
+SARS-CoV-2_88_LEFT_alt1	0
+SARS-CoV-2_88_LEFT	0
+SARS-CoV-2_87_RIGHT	0
+SARS-CoV-2_89_LEFT	0
+SARS-CoV-2_89_LEFT_alt1	4
+SARS-CoV-2_88_RIGHT	0
+SARS-CoV-2_90_LEFT	0
+SARS-CoV-2_89_RIGHT	25
+SARS-CoV-2_89_RIGHT_alt1	0
+SARS-CoV-2_91_LEFT	82
+SARS-CoV-2_90_RIGHT_alt1	73
+SARS-CoV-2_90_RIGHT	0
+SARS-CoV-2_92_LEFT	0
+SARS-CoV-2_91_RIGHT	24
+SARS-CoV-2_93_LEFT	0
+SARS-CoV-2_92_RIGHT	0
+SARS-CoV-2_94_LEFT	0
+SARS-CoV-2_93_RIGHT	0
+SARS-CoV-2_95_LEFT	0
+SARS-CoV-2_94_RIGHT	13
+SARS-CoV-2_96_LEFT	11
+SARS-CoV-2_95_RIGHT	0
+SARS-CoV-2_97_LEFT	263
+SARS-CoV-2_96_RIGHT	0
+SARS-CoV-2_98_LEFT	0
+SARS-CoV-2_97_RIGHT	0
+SARS-CoV-2_99_LEFT	407
+SARS-CoV-2_98_RIGHT	0
+SARS-CoV-2_99_RIGHT	553
+
+Trimmed primers from 9.24% (16525) of reads.
+21.46% (38363) of reads were quality trimmed below the minimum length of 50 bp and were not written to file.
+71.33% (127546) of reads that started outside of primer regions were not written to file
+227862 unmapped reads were not written to file.
+26.77% (47862) of reads had their insert size smaller than their read length
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 09:19:54 PDT 2026] Step 4/6 — Alignment statistics
+[Wed Jun 24 09:19:54 PDT 2026] Step 5/6 — Variant calling + depth (freyja variants)
+samtools mpileup -aa -A -d 600000 -Q 20 -q 0 -B -f /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR39226698/aligned/SRR39226698.trimmed.sorted.bam | tee >(cut -f1-4 > data/results/SRR39226698/variants/SRR39226698.depths.tsv) | ivar variants -p data/results/SRR39226698/variants/SRR39226698 -q 20 -t 0.0 -r /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta
+[mpileup] 1 samples in 1 input files
+[Wed Jun 24 09:19:56 PDT 2026] Step 6/6 — Lineage demixing (freyja demix)
+/opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/sample_deconv.py:201: UserWarning: Solution may be inaccurate. Try another solver, adjusting the solver settings, or solve with verbose=True for more information.
+  prob.solve(verbose=verbose, solver=solver_, **solver_kwargs)
+building mix/depth matrices
+demixing
+[Wed Jun 24 09:20:01 PDT 2026] Done. Results → data/results/SRR39226698/SRR39226698.freyja.tsv
+
+── Lineage summary ──────────────────────────────────────────────────────
+	data/results/SRR39226698/variants/SRR39226698.tsv
+summarized	[('Other', 0.5403263915377423), ('XFG* (XFG.X)', 0.45021309833925793), ('BA.2.86* (BA.2.86.X)', 0.007434990543421036)]
+lineages	XGH XFG.3.19 XFG.14.5 LF.7.1.11 XFG.3.3.1 XFG.3.9 XFG.38 XFG.14 XFG.3.1 XFG.3.14 XFG.3.16 XFG.3.4 XFG.3.5.2 XFG.3.3.2 XFG.3.6.3 XFG.3.3 XFG.3.6.4 XFG.17.2 XFG.3.1.9 XFG.3.1.2 XFG.3.1.10 XFG.3.1.3 XFG.3.1.6 XFG.3.1.1 XFG.3.1.5 XFG.3.13.1 XFG.3.10.1 XFG.3.6 XFG.3.24 XFG.3.4.8 XFG.3.33 XFG XFG.23 XFG.1 XFG.17 XFG.3 XFG.16 XFG.19 XFG.3.8 XFG.3.20 XFG.37 XFG.17.1 XFG.17.3 XFG.3.2 XFG.3.22 XFG.3.13 XFG.3.12 XFG.3.10 XFG.3.11 XFG.3.7 XFG.3.30 XFG.3.29 XFG.3.18 XFG.3.5 XFG.3.4.9 QF.1.1.1 XFG.3.1.4 XFG.3.1.8 QF.3 QF.6 QF.2 XFG.3.4.4 XFG.14.1.6 XFG.14.1.2 XFG.14.1.10 XFG.14.1.8 XFG.14.1.4 QF.2.5 QF.2.6 QF.2.2 XFG.14.1.5 RL.1 XFG.14.1.7 XFG.14.1.9 XFG.14.1.1 XGE XGF QF.1 QF.1.1 QF.2.2.1 SD.1 XFG.3.4.2 XFG.3.4.6 XFG.3.6.1 QK.3 SE.1 SP.1 XFG.14.7 XFG.14.8 XFG.14.2 XFG.14.9 XFG.14.1 XFG.3.5.1 XFG.14.6 XFG.14.10 XFG.3.1.7 XFG.3.30.2 XFG.3.16.1 XFG.3.4.7 XFG.3.4.1 QT.3 QT.1 XFG.3.18.1 XFG.3.28 SE.2 XFG.5.4.2 QS.4 XFG.3.17 XFG.3.12.1 XFG.35 XFG.3.27.1 RF.5 RF.5.3
+abundances	0.53224500 0.01818180 0.01785709 0.00479606 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00404070 0.00371747 0.00301205 0.00289017 0.00183150 0.00135684 0.00133728 0.00131946 0.00131946
+resid	2.879085012273115
+coverage	17.76410393605993

@@ -1,0 +1,310 @@
+[Wed Jun 24 10:06:37 PDT 2026] Starting pipeline for sample: SRR23879091
+[Wed Jun 24 10:06:37 PDT 2026] Step 1/6 — Adapter trimming (fastp)
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Detecting adapter sequence for read2...
+No adapter detected for read2
+
+Read1 before filtering:
+total reads: 798696
+total bases: 78202611
+Q20 bases: 76918065(98.3574%)
+Q30 bases: 74832649(95.6907%)
+Q40 bases: 0(0%)
+
+Read2 before filtering:
+total reads: 798696
+total bases: 78219282
+Q20 bases: 75622890(96.6806%)
+Q30 bases: 72318210(92.4557%)
+Q40 bases: 0(0%)
+
+Read1 after filtering:
+total reads: 779376
+total bases: 77149737
+Q20 bases: 75931273(98.4207%)
+Q30 bases: 73885330(95.7687%)
+Q40 bases: 0(0%)
+
+Read2 after filtering:
+total reads: 779376
+total bases: 77152903
+Q20 bases: 74821230(96.9779%)
+Q30 bases: 71599507(92.8021%)
+Q40 bases: 0(0%)
+
+Filtering result:
+reads passed filter: 1558752
+reads failed due to low quality: 9514
+reads failed due to too many N: 3444
+reads failed due to too short: 25682
+reads failed due to adapter dimer: 0
+reads with adapter trimmed: 3526
+bases trimmed due to adapters: 21628
+
+Duplication rate: 36.5084%
+
+Insert size peak (evaluated by paired-end reads): 160
+
+JSON report: data/results/SRR23879091/trimmed/SRR23879091_fastp.json
+HTML report: data/results/SRR23879091/trimmed/SRR23879091_fastp.html
+
+fastp --in1 data/raw/SRR23879091_R1.fastq.gz --in2 data/raw/SRR23879091_R2.fastq.gz --out1 data/results/SRR23879091/trimmed/SRR23879091_R1.fastq.gz --out2 data/results/SRR23879091/trimmed/SRR23879091_R2.fastq.gz --json data/results/SRR23879091/trimmed/SRR23879091_fastp.json --html data/results/SRR23879091/trimmed/SRR23879091_fastp.html --thread 4 --qualified_quality_phred 20 --length_required 50 --detect_adapter_for_pe 
+fastp v1.1.0, time used: 26 seconds
+[Wed Jun 24 10:07:03 PDT 2026] Step 2/6 — Alignment (minimap2)
+[M::mm_idx_gen::0.001*3.82] collected minimizers
+[M::mm_idx_gen::0.002*3.83] sorted minimizers
+[M::main::0.002*3.78] loaded/built the index for 1 target sequence(s)
+[M::mm_mapopt_update::0.002*3.77] mid_occ = 1000
+[M::mm_idx_stat] kmer size: 21; skip: 11; is_hpc: 0; #seq: 1
+[M::mm_idx_stat::0.002*3.58] distinct minimizers: 4989 (99.98% are singletons); average occurrences: 1.002; average spacing: 5.979; total length: 29903
+[M::worker_pipeline::0.720*2.31] mapped 504490 sequences
+[M::worker_pipeline::1.116*2.70] mapped 505098 sequences
+[M::worker_pipeline::1.507*2.72] mapped 505594 sequences
+[M::worker_pipeline::1.519*2.71] mapped 43570 sequences
+[M::main] Version: 2.31-r1302
+[M::main] CMD: minimap2 -ax sr -t 4 /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR23879091/trimmed/SRR23879091_R1.fastq.gz data/results/SRR23879091/trimmed/SRR23879091_R2.fastq.gz
+[M::main] Real time: 1.520 sec; CPU: 4.119 sec; Peak RSS: 0.329 GB
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 10:07:05 PDT 2026] Step 3/6 — Primer trimming (ivar trim)
+Found 209 primers in BED file
+Reading from data/results/SRR23879091/aligned/SRR23879091.sorted.bam
+
+-------
+Results: 
+Primer Name	Read Count
+SARS-CoV-2_1_LEFT	0
+SARS-CoV-2_2_LEFT	0
+SARS-CoV-2_1_RIGHT	0
+SARS-CoV-2_3_LEFT	0
+SARS-CoV-2_2_RIGHT	0
+SARS-CoV-2_4_LEFT	0
+SARS-CoV-2_3_RIGHT	0
+SARS-CoV-2_5_LEFT	0
+SARS-CoV-2_4_RIGHT	0
+SARS-CoV-2_6_LEFT	277
+SARS-CoV-2_5_RIGHT	6
+SARS-CoV-2_7_LEFT	4
+SARS-CoV-2_6_RIGHT	81
+SARS-CoV-2_8_LEFT	0
+SARS-CoV-2_7_RIGHT	0
+SARS-CoV-2_9_LEFT	0
+SARS-CoV-2_8_RIGHT	0
+SARS-CoV-2_10_LEFT_alt1	0
+SARS-CoV-2_10_LEFT	0
+SARS-CoV-2_9_RIGHT	0
+SARS-CoV-2_11_LEFT	150
+SARS-CoV-2_10_RIGHT_alt1	8
+SARS-CoV-2_10_RIGHT	34
+SARS-CoV-2_12_LEFT	0
+SARS-CoV-2_11_RIGHT	142
+SARS-CoV-2_13_LEFT	0
+SARS-CoV-2_12_RIGHT	0
+SARS-CoV-2_14_LEFT	0
+SARS-CoV-2_13_RIGHT	0
+SARS-CoV-2_15_LEFT	0
+SARS-CoV-2_14_RIGHT	0
+SARS-CoV-2_16_LEFT	0
+SARS-CoV-2_15_RIGHT	0
+SARS-CoV-2_17_LEFT	0
+SARS-CoV-2_16_RIGHT	0
+SARS-CoV-2_18_LEFT	269
+SARS-CoV-2_17_RIGHT	0
+SARS-CoV-2_19_LEFT	2
+SARS-CoV-2_18_RIGHT	172
+SARS-CoV-2_20_LEFT	0
+SARS-CoV-2_19_RIGHT	0
+SARS-CoV-2_21_LEFT	0
+SARS-CoV-2_20_RIGHT	0
+SARS-CoV-2_22_LEFT	0
+SARS-CoV-2_21_RIGHT	0
+SARS-CoV-2_23_LEFT	12
+SARS-CoV-2_22_RIGHT	0
+SARS-CoV-2_24_LEFT	4
+SARS-CoV-2_23_RIGHT	27
+SARS-CoV-2_23_RIGHT_alt1	0
+SARS-CoV-2_25_LEFT	257
+SARS-CoV-2_24_RIGHT	6
+SARS-CoV-2_26_LEFT	12
+SARS-CoV-2_25_RIGHT	321
+SARS-CoV-2_27_LEFT	127
+SARS-CoV-2_26_RIGHT	8
+SARS-CoV-2_28_LEFT	381
+SARS-CoV-2_27_RIGHT_alt1	103
+SARS-CoV-2_27_RIGHT	2
+SARS-CoV-2_29_LEFT	29
+SARS-CoV-2_28_RIGHT	348
+SARS-CoV-2_30_LEFT	0
+SARS-CoV-2_29_RIGHT	8
+SARS-CoV-2_31_LEFT	8
+SARS-CoV-2_30_RIGHT	0
+SARS-CoV-2_32_LEFT	0
+SARS-CoV-2_31_RIGHT	25
+SARS-CoV-2_33_LEFT	0
+SARS-CoV-2_32_RIGHT	0
+SARS-CoV-2_34_LEFT	0
+SARS-CoV-2_33_RIGHT	0
+SARS-CoV-2_35_LEFT	0
+SARS-CoV-2_34_RIGHT	0
+SARS-CoV-2_36_LEFT	0
+SARS-CoV-2_35_RIGHT	0
+SARS-CoV-2_37_LEFT	0
+SARS-CoV-2_36_RIGHT	0
+SARS-CoV-2_38_LEFT	0
+SARS-CoV-2_37_RIGHT	0
+SARS-CoV-2_39_LEFT	0
+SARS-CoV-2_38_RIGHT	0
+SARS-CoV-2_40_LEFT	140
+SARS-CoV-2_39_RIGHT	4
+SARS-CoV-2_41_LEFT	2
+SARS-CoV-2_40_RIGHT	161
+SARS-CoV-2_42_LEFT	37
+SARS-CoV-2_41_RIGHT	5
+SARS-CoV-2_43_LEFT	0
+SARS-CoV-2_42_RIGHT	39
+SARS-CoV-2_44_LEFT	0
+SARS-CoV-2_43_RIGHT	0
+SARS-CoV-2_45_LEFT	0
+SARS-CoV-2_44_RIGHT	0
+SARS-CoV-2_46_LEFT	0
+SARS-CoV-2_45_RIGHT	0
+SARS-CoV-2_47_LEFT	0
+SARS-CoV-2_46_RIGHT	0
+SARS-CoV-2_48_LEFT	0
+SARS-CoV-2_47_RIGHT	0
+SARS-CoV-2_49_LEFT	0
+SARS-CoV-2_48_RIGHT	0
+SARS-CoV-2_50_LEFT	3
+SARS-CoV-2_49_RIGHT	0
+SARS-CoV-2_51_LEFT	0
+SARS-CoV-2_50_RIGHT	0
+SARS-CoV-2_52_LEFT	0
+SARS-CoV-2_51_RIGHT	0
+SARS-CoV-2_53_LEFT	0
+SARS-CoV-2_52_RIGHT	0
+SARS-CoV-2_54_LEFT	1
+SARS-CoV-2_53_RIGHT	0
+SARS-CoV-2_55_LEFT	0
+SARS-CoV-2_54_RIGHT	1
+SARS-CoV-2_56_LEFT	0
+SARS-CoV-2_55_RIGHT	0
+SARS-CoV-2_57_LEFT	0
+SARS-CoV-2_56_RIGHT	0
+SARS-CoV-2_58_LEFT	0
+SARS-CoV-2_57_RIGHT	0
+SARS-CoV-2_59_LEFT	65
+SARS-CoV-2_58_RIGHT	0
+SARS-CoV-2_60_LEFT	7
+SARS-CoV-2_59_RIGHT	43
+SARS-CoV-2_61_LEFT	27
+SARS-CoV-2_60_RIGHT	0
+SARS-CoV-2_62_LEFT	354
+SARS-CoV-2_61_RIGHT	108
+SARS-CoV-2_63_LEFT	458
+SARS-CoV-2_62_RIGHT	209
+SARS-CoV-2_64_LEFT	19
+SARS-CoV-2_63_RIGHT	951
+SARS-CoV-2_65_LEFT	286
+SARS-CoV-2_64_RIGHT	30
+SARS-CoV-2_66_LEFT	4
+SARS-CoV-2_65_RIGHT	124
+SARS-CoV-2_67_LEFT	130
+SARS-CoV-2_66_RIGHT	53
+SARS-CoV-2_68_LEFT	0
+SARS-CoV-2_67_RIGHT	81
+SARS-CoV-2_69_LEFT	227
+SARS-CoV-2_68_RIGHT	51
+SARS-CoV-2_70_LEFT	14
+SARS-CoV-2_69_RIGHT	360
+SARS-CoV-2_71_LEFT	29
+SARS-CoV-2_70_RIGHT	0
+SARS-CoV-2_72_LEFT	7
+SARS-CoV-2_71_RIGHT	47
+SARS-CoV-2_73_LEFT	8
+SARS-CoV-2_72_RIGHT	0
+SARS-CoV-2_74_LEFT	3
+SARS-CoV-2_73_RIGHT	7
+SARS-CoV-2_75_LEFT	12
+SARS-CoV-2_74_RIGHT	0
+SARS-CoV-2_76_LEFT	0
+SARS-CoV-2_76_LEFT_alt1	0
+SARS-CoV-2_75_RIGHT	0
+SARS-CoV-2_77_LEFT	48
+SARS-CoV-2_76_RIGHT	6
+SARS-CoV-2_76_RIGHT_alt1	16
+SARS-CoV-2_78_LEFT	21
+SARS-CoV-2_77_RIGHT	101
+SARS-CoV-2_79_LEFT	228
+SARS-CoV-2_78_RIGHT	0
+SARS-CoV-2_80_LEFT	2
+SARS-CoV-2_79_RIGHT_alt1	34
+SARS-CoV-2_79_RIGHT	0
+SARS-CoV-2_81_LEFT	175
+SARS-CoV-2_80_RIGHT	11
+SARS-CoV-2_82_LEFT	1022
+SARS-CoV-2_81_RIGHT	363
+SARS-CoV-2_83_LEFT	338
+SARS-CoV-2_82_RIGHT	566
+SARS-CoV-2_84_LEFT	808
+SARS-CoV-2_83_RIGHT	233
+SARS-CoV-2_85_LEFT	109
+SARS-CoV-2_84_RIGHT	264
+SARS-CoV-2_86_LEFT	289
+SARS-CoV-2_85_RIGHT	94
+SARS-CoV-2_87_LEFT	364
+SARS-CoV-2_86_RIGHT	270
+SARS-CoV-2_88_LEFT_alt1	189
+SARS-CoV-2_88_LEFT	246
+SARS-CoV-2_87_RIGHT	3473
+SARS-CoV-2_89_LEFT	2
+SARS-CoV-2_89_LEFT_alt1	844
+SARS-CoV-2_88_RIGHT	137
+SARS-CoV-2_90_LEFT	272
+SARS-CoV-2_89_RIGHT	646
+SARS-CoV-2_89_RIGHT_alt1	80
+SARS-CoV-2_91_LEFT	251
+SARS-CoV-2_90_RIGHT_alt1	320
+SARS-CoV-2_90_RIGHT	44
+SARS-CoV-2_92_LEFT	53
+SARS-CoV-2_91_RIGHT	141
+SARS-CoV-2_93_LEFT	399
+SARS-CoV-2_92_RIGHT	111
+SARS-CoV-2_94_LEFT	653
+SARS-CoV-2_93_RIGHT	349
+SARS-CoV-2_95_LEFT	1523
+SARS-CoV-2_94_RIGHT	681
+SARS-CoV-2_96_LEFT	5887
+SARS-CoV-2_95_RIGHT	1951
+SARS-CoV-2_97_LEFT	778
+SARS-CoV-2_96_RIGHT	3354
+SARS-CoV-2_98_LEFT	1429
+SARS-CoV-2_97_RIGHT	419
+SARS-CoV-2_99_LEFT	57
+SARS-CoV-2_98_RIGHT	1863
+SARS-CoV-2_99_RIGHT	143
+
+Trimmed primers from 25.79% (37426) of reads.
+2.04% (2958) of reads were quality trimmed below the minimum length of 50 bp and were not written to file.
+73.12% (106132) of reads that started outside of primer regions were not written to file
+1413698 unmapped reads were not written to file.
+6.88% (9987) of reads had their insert size smaller than their read length
+[bam_sort_core] merging from 0 files and 4 in-memory blocks...
+[Wed Jun 24 10:07:07 PDT 2026] Step 4/6 — Alignment statistics
+[Wed Jun 24 10:07:07 PDT 2026] Step 5/6 — Variant calling + depth (freyja variants)
+samtools mpileup -aa -A -d 600000 -Q 20 -q 0 -B -f /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta data/results/SRR23879091/aligned/SRR23879091.trimmed.sorted.bam | tee >(cut -f1-4 > data/results/SRR23879091/variants/SRR23879091.depths.tsv) | ivar variants -p data/results/SRR23879091/variants/SRR23879091 -q 20 -t 0.0 -r /opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/NC_045512_Hu-1.fasta
+[mpileup] 1 samples in 1 input files
+[Wed Jun 24 10:07:09 PDT 2026] Step 6/6 — Lineage demixing (freyja demix)
+/opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/sample_deconv.py:201: UserWarning: Solution may be inaccurate. Try another solver, adjusting the solver settings, or solve with verbose=True for more information.
+  prob.solve(verbose=verbose, solver=solver_, **solver_kwargs)
+building mix/depth matrices
+demixing
+[Wed Jun 24 10:07:14 PDT 2026] Done. Results → data/results/SRR23879091/SRR23879091.freyja.tsv
+
+── Lineage summary ──────────────────────────────────────────────────────
+	data/results/SRR23879091/variants/SRR23879091.tsv
+summarized	[('Omicron', 0.9999290875613233)]
+lineages	BA.5.11 BA.5.12 BF.16 BF.7.24 BF.7.6 BF.7.7 BF.7.16 BF.7.20 BF.7.1 BF.7.18 BF.7.23 BF.7.12 BF.1 BF.35 BF.36 BF.29 BF.7.4 BF.7.13 BF.7.3 BF.7.26 BF.3 BF.38.2 BF.7.15 BA.5.2.1 BF.8 BF.18 BF.6 BF.31 BF.41 BF.39 BF.38 BF.4 BF.30 BF.14 BF.2 BF.28 BF.7 BF.23 BF.7.22 BA.5.2 BF.7.4.1 BF.7.4.2 BF.1.1 BF.39.1 BF.7.5 BF.7.11 BF.7.13.2 BA.5.2.54 BA.5.2.43 CP.2 CP.3 BA.5.2.13 BU.1 BZ.2 BA.5.2.32 CK.2.1 CK.2 CK.1.1 BA.5.2.63 BA.5.2.8 CF.1 BA.5.2.25 BA.5.2.35 BA.5.2.58 CP.1.2 CP.1.3 BV.1 CD.2 CK.1.3 DB.2 CR.1.1 BA.5.2.16 BA.5.2.44 BA.5.2.38 CK.1 BA.5.2.3 CT.1 DA.1 BA.5.2.37 BA.5.2.52 BA.5.2.61 BA.5.2.29 CP.5 CP.1 CE.1 CK.1.5 CR.1 CR.2 BV.2 BA.5.2.56 BA.5.2.24 BA.5.2.12 BA.5.2.57 BA.5.2.31 BA.5.2.18 BA.5.2.20 BA.5.2.33 BA.5.2.62 BA.5.2.6 BA.5.2.28 BA.5.2.27 BA.5.2.22 BA.5.2.36 CK.1.1.1
+abundances	0.66988151 0.12290631 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00214893 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753 0.00193753
+resid	1.1964997451726611
+coverage	21.934254088218573
