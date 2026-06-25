@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Freyja SARS-CoV-2 lineage abundance pipeline
 # Platform : Illumina paired-end
-# Primer scheme: ARTIC v4.1
+# Primer scheme: ARTIC v5.3.2 (default)
 #
 # Usage: bash run_sample.sh <SAMPLE_ID> <R1.fastq.gz> <R2.fastq.gz> [OUTPUT_DIR]
 #
@@ -23,7 +23,8 @@ OUTDIR="${4:-data/results}"
 FREYJA_DATA="$(python -c "import freyja; import os; print(os.path.join(os.path.dirname(freyja.__file__), 'data'))")"
 REF="${FREYJA_DATA}/NC_045512_Hu-1.fasta"
 GFF="${FREYJA_DATA}/NC_045512_Hu-1.gff"
-PRIMERS="${FREYJA_DATA}/ARTIC_V4-1.bed"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PRIMERS="${SCRIPT_DIR}/data/bed/ARTIC_V5.3.2.bed"
 
 # ── Settings ──────────────────────────────────────────────────────────────────
 THREADS=4
@@ -31,6 +32,7 @@ MIN_QUALITY=20
 MIN_DEPTH=10
 MIN_FREQ=0.03        # freyja variant frequency threshold
 MAX_DEPTH=600000     # mpileup cap (keeps memory sane on deep wastewater)
+MAX_READS=3000000    # subsample cap — sufficient for freyja demixing
 
 # ── Skip if already processed ─────────────────────────────────────────────────
 FREYJA_OUT="${OUTDIR}/${SAMPLE}/${SAMPLE}.freyja.tsv"
@@ -46,6 +48,21 @@ mkdir -p "${SAMPLE_DIR}"/{trimmed,aligned,variants}
 LOG="${SAMPLE_DIR}/${SAMPLE}.log"
 exec > >(tee -a "${LOG}") 2>&1
 echo "[$(date)] Starting pipeline for sample: ${SAMPLE}"
+
+# ── Step 0: Subsample if reads exceed cap ────────────────────────────────────
+TOTAL_READS=$(zcat "${R1}" | awk 'NR%4==1' | wc -l | tr -d ' ')
+echo "[$(date)] Total reads: ${TOTAL_READS}"
+if [[ "${TOTAL_READS}" -gt "${MAX_READS}" ]]; then
+    echo "[$(date)] Step 0/6 — Subsampling to ${MAX_READS} reads (seqtk)"
+    FRAC=$(echo "scale=6; ${MAX_READS} / ${TOTAL_READS}" | bc)
+    seqtk sample -s 42 "${R1}" "${FRAC}" | gzip > "${SAMPLE_DIR}/trimmed/${SAMPLE}_sub_R1.fastq.gz"
+    seqtk sample -s 42 "${R2}" "${FRAC}" | gzip > "${SAMPLE_DIR}/trimmed/${SAMPLE}_sub_R2.fastq.gz"
+    R1="${SAMPLE_DIR}/trimmed/${SAMPLE}_sub_R1.fastq.gz"
+    R2="${SAMPLE_DIR}/trimmed/${SAMPLE}_sub_R2.fastq.gz"
+    echo "[$(date)] Subsampling done — using ${MAX_READS} reads"
+else
+    echo "[$(date)] Read count within limit — no subsampling needed"
+fi
 
 # ── Step 1: Quality trim with fastp ───────────────────────────────────────────
 echo "[$(date)] Step 1/6 — Adapter trimming (fastp)"

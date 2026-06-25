@@ -2,7 +2,7 @@
 
 Freyja-based pipeline for SARS-CoV-2 lineage abundance estimation from wastewater sequencing data.
 
-**Tools:** Freyja · minimap2 · ivar · samtools · fastp · SRA toolkit  
+**Tools:** Freyja · minimap2 · ivar · samtools · fastp · seqtk · SRA toolkit  
 **Conda environment:** `freyja-env`
 
 ---
@@ -33,12 +33,19 @@ covid_sequencing/
 ├── data/
 │   ├── accessions/               ← DROP your SRA accession .txt files here
 │   ├── metadata/                 ← DROP your SRA metadata .csv files here
+│   ├── bed/                      ← Primer scheme BED files (ARTIC v5.3.2 bundled)
 │   ├── raw/                      ← FASTQs are downloaded here automatically
 │   └── results/                  ← All pipeline outputs land here
 │         ├── <SAMPLE>/               Per-sample folder
-│         ├── all_samples_aggregated.tsv
-│         ├── lineage_plot.pdf         Bar chart (all samples)
-│         └── lineage_timeseries.pdf   Time-series (requires dates in metadata)
+│         └── _aggregate/
+│               ├── <batch_name>/     Per-batch aggregate (current batch only)
+│               │     aggregated.tsv
+│               │     lineage_plot.pdf
+│               │     lineage_timeseries.pdf
+│               └── all_batches/      Cumulative aggregate (every sample ever run)
+│                     aggregated.tsv
+│                     lineage_plot.pdf
+│                     lineage_timeseries.pdf
 │
 ├── run_sample.sh                 ← Single-sample pipeline (used internally)
 ├── run_all.sh                    ← Batch runner + aggregate + plot (used internally)
@@ -53,19 +60,22 @@ covid_sequencing/
 | Step | What happens |
 |------|-------------|
 | 1 | Picks the **newest** `.txt` in `data/accessions/` |
-| 2 | Downloads any accessions not already in `data/raw/` (skips existing) |
-| 3 | Picks the **newest** `.csv` in `data/metadata/` |
+| 2 | Detects metadata and **checks primer schemes** before downloading — warns if mismatch |
+| 3 | Downloads any accessions not already in `data/raw/` (skips existing) |
 | 4 | Runs the Freyja pipeline on each new sample (skips already-processed ones) |
-| 5 | Aggregates **all** results ever processed (cumulative) and produces plots |
+| 5 | Produces a **per-batch** aggregate (current batch only) |
+| 6 | Produces an **all-batches** aggregate (every sample ever processed) |
 
 ### Pipeline steps per sample
 
 ```
-fastp → minimap2 → samtools → ivar trim → freyja variants → freyja demix
-  │         │          │           │              │                │
-trim      align      sort &    remove         call            estimate
-reads     to ref     index    primers        variants         lineages
+subsample → fastp → minimap2 → samtools → ivar trim → freyja variants → freyja demix
+    │          │         │          │           │              │                │
+cap at      trim      align      sort &    remove         call            estimate
+3M reads   reads     to ref     index    primers        variants         lineages
 ```
+
+> Subsampling only happens if the sample has more than 3 million reads. Most wastewater samples need far fewer reads than labs sequence — capping at 3M reduces processing time significantly without affecting lineage calls.
 
 ---
 
@@ -83,16 +93,18 @@ SRR23879090
 
 - Lines starting with `#` are ignored
 - File can have any name — script picks the newest one automatically
+- Each new file creates its own batch folder in `_aggregate/`
 
 ### Metadata (drop into `data/metadata/`)
 
 Download from NCBI SRA → select runs → **Metadata (RunInfo Table)**.
 
-The pipeline uses these two columns (all others are ignored):
+The pipeline uses these columns (all others are ignored):
 
 | Column | Example | Required for |
 |--------|---------|-------------|
 | `Run` | SRR39226689 | Always |
+| `amplicon_PCR_primer_scheme` | ARTIC V5.3.2 | Primer scheme check |
 | `collection_date` | 2026-06-07 | Time-series plot only |
 
 File can have any name — script picks the newest one automatically.
@@ -100,6 +112,13 @@ File can have any name — script picks the newest one automatically.
 ---
 
 ## Understanding the Output
+
+### Per-batch vs all-batches
+
+Every run produces two sets of aggregate outputs:
+
+- `_aggregate/<batch_name>/` — only the samples from the current accession file
+- `_aggregate/all_batches/` — every sample ever processed, updated automatically
 
 ### Per-sample result: `data/results/<SAMPLE>/<SAMPLE>.freyja.tsv`
 
@@ -113,7 +132,7 @@ File can have any name — script picks the newest one automatically.
 
 ### Interpreting `resid` (residual)
 
-The residual measures how well freyja's best lineage mixture explains the variant frequencies actually observed in your sample. Lower is better.
+The residual measures how well freyja's best lineage mixture explains the variant frequencies observed. Lower is better.
 
 | resid | Interpretation |
 |-------|---------------|
@@ -127,6 +146,42 @@ The residual measures how well freyja's best lineage mixture explains the varian
 The pipeline uses `--mincov 0` so **all samples appear in plots** regardless of coverage. For wastewater, **20–50% coverage is normal and expected** — RNA in wastewater is degraded and viral concentrations are low. The 60% freyja default was designed for clinical samples.
 
 > Use `resid` as the primary quality indicator, not coverage, for wastewater data.
+
+---
+
+## Primer Scheme Check
+
+Before downloading anything, the pipeline checks the `amplicon_PCR_primer_scheme` column in your metadata and warns if any sample uses a different primer scheme than the pipeline default (**ARTIC v5.3.2**).
+
+Example warning output:
+```
+  SRR12345678: QIAseq DIRECT  [MISMATCH]
+
+  *** WARNING: primer scheme mismatch detected ***
+  Pipeline uses: ARTIC V5.3.2
+  Affected samples:
+    SRR12345678 uses QIAseq DIRECT
+  ...
+```
+
+**If you see a mismatch:**
+1. Get the correct BED file for that primer scheme
+2. Drop it into `data/bed/`
+3. Tell the pipeline maintainer the filename — they will update the pipeline to use it
+4. Delete the bad results and re-run:
+```bash
+rm -rf data/results/<SAMPLE_ID>/
+bash run.sh
+```
+
+**Known primer schemes and BED file sources:**
+
+| Scheme | Source |
+|--------|--------|
+| ARTIC v5.3.2 | Bundled — no action needed |
+| ARTIC v4.x | https://github.com/artic-network/primer-schemes |
+| Midnight | https://github.com/artic-network/primer-schemes |
+| QIAseq DIRECT | Not public — contact Qiagen |
 
 ---
 
@@ -144,15 +199,7 @@ conda activate freyja-env
 bash run.sh
 ```
 
-The script will only download and process new samples, then regenerate the aggregate plots with all samples (old + new).
-
----
-
-## Primer Scheme Note
-
-This pipeline trims primers using the **ARTIC v4.1** scheme. If your samples were sequenced with a different kit (e.g. **QIAseq DIRECT** from Qiagen), the primer trimming step will discard most reads, resulting in artificially low coverage (~25%) and a high `resid`.
-
-**How to check:** look at the `amplicon_PCR_primer_scheme` column in your SRA metadata. If it says `ARTIC` you're fine. If it says something else, check the `resid` value — a `resid > 10` on a low-coverage sample is a sign of a primer scheme mismatch.
+The script will check primer schemes, download only new samples, process only unprocessed ones, and update both the per-batch and all-batches aggregate plots.
 
 ---
 
@@ -172,11 +219,11 @@ freyja update
 **"No .txt files found in data/accessions/"**  
 → Drop an accession list `.txt` file into `data/accessions/` first.
 
-**Download seems stuck / silent for several minutes**  
-→ It's probably gzipping large FASTQ files. This is silent and can take 5–10 minutes for large files. Check `data/raw/` to confirm files are appearing.
+**Primer scheme mismatch warning**  
+→ The pipeline detected that your samples use a different primer scheme than ARTIC v5.3.2. Get the correct BED file from the sequencing lab or the source listed in the warning, drop it in `data/bed/`, and update the pipeline before processing.
 
 **Sample has very high resid (> 10)**  
-→ Check the primer scheme in your metadata. If it's not ARTIC v4.1, the primer trimming may be wrong for those samples.
+→ Most likely a primer scheme mismatch. Check the `amplicon_PCR_primer_scheme` column in your metadata. The pipeline will warn you automatically if a mismatch is detected before the run starts.
 
 **Time-series plot not generated**  
 → Your metadata `.csv` must have a `collection_date` column in `YYYY-MM-DD` format. Samples without a valid date are excluded from the time-series.
@@ -202,4 +249,5 @@ bash run.sh
 | minimap2 | 2.31 | Read alignment |
 | samtools | 1.21 | BAM processing |
 | fastp | 1.1.0 | Read quality trimming |
+| seqtk | 1.5-r133 | Read subsampling |
 | sra-tools | 3.4.1 | SRA download |
