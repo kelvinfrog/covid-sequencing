@@ -14,5 +14,20 @@ data/results/all_samples_aggregated_timed.tsv
 # Stray SRA download folders (prefetch sometimes leaves these in project root)
 SRR*/
 
+# Per-sample freyja results and generated outputs — reproducible, keep out of git
+data/results/
+
+# Accession lists and metadata — drop into data/ folders at runtime
+data/accessions/
+data/metadata/
+
+# Nextflow cache and logs
+.nextflow/
+.nextflow.log*
+work/
+
+# Nextflow binary (if downloaded locally)
+nextflow
+
 # macOS
 .DS_Store

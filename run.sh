@@ -30,13 +30,7 @@ echo "════════════════════════�
 echo " Step 1 — Picking newest accession file"
 echo "════════════════════════════════════════════════════════════════════"
 
-ACC_FILE=$(
-    find "${ACCESSIONS_DIR}" -maxdepth 1 -name "*.txt" -print0 \
-    | xargs -0 stat -f "%m %N" 2>/dev/null \
-    | sort -rn \
-    | head -1 \
-    | cut -d' ' -f2-
-)
+ACC_FILE=$(ls -t "${ACCESSIONS_DIR}"/*.txt 2>/dev/null | head -1)
 
 if [[ -z "${ACC_FILE}" ]]; then
     echo "ERROR: No .txt files found in ${ACCESSIONS_DIR}/"
@@ -65,13 +59,7 @@ echo "════════════════════════�
 
 METADATA_FILE=""
 if [[ -d "${METADATA_DIR}" ]]; then
-    METADATA_FILE=$(
-        find "${METADATA_DIR}" -maxdepth 1 -name "*.csv" -print0 \
-        | xargs -0 stat -f "%m %N" 2>/dev/null \
-        | sort -rn \
-        | head -1 \
-        | cut -d' ' -f2-
-    )
+    METADATA_FILE=$(ls -t "${METADATA_DIR}"/*.csv 2>/dev/null | head -1)
 fi
 
 if [[ -n "${METADATA_FILE}" ]]; then
@@ -189,23 +177,20 @@ for ACC in "${ACCESSIONS[@]}"; do
         continue
     fi
 
-    echo "[DOWNLOAD] ${ACC}..."
-    if prefetch "${ACC}" --output-directory "${RAW_DIR}" --progress \
-    && fasterq-dump "${RAW_DIR}/${ACC}" \
-           --outdir "${RAW_DIR}" \
+    echo "[DOWNLOAD] ${ACC} (first 2M reads)..."
+    if fastq-dump "${ACC}" \
+           --maxSpotId 2000000 \
            --split-files \
-           --threads "${THREADS}" \
-           --progress; then
-        gzip -f "${RAW_DIR}/${ACC}_1.fastq" "${RAW_DIR}/${ACC}_2.fastq"
+           --gzip \
+           --outdir "${RAW_DIR}"; then
         mv "${RAW_DIR}/${ACC}_1.fastq.gz" "${R1}"
         mv "${RAW_DIR}/${ACC}_2.fastq.gz" "${R2}"
-        rm -rf "${RAW_DIR}/${ACC}"
         echo "  Done."
         DOWNLOADED=$((DOWNLOADED + 1))
     else
         echo "  ERROR: Download failed for ${ACC}"
         FAILED_DOWNLOADS+=("${ACC}")
-        rm -rf "${RAW_DIR}/${ACC}"
+        rm -f "${RAW_DIR}/${ACC}_1.fastq.gz" "${RAW_DIR}/${ACC}_2.fastq.gz"
     fi
 done
 

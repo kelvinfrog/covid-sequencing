@@ -192,8 +192,101 @@ find "${RESULTS_DIR}" -name "*.freyja.tsv" \
 
 aggregate_and_plot "${ALL_STAGING}" "${ALL_STAGING}" "all_batches"
 
+# ── Run log ───────────────────────────────────────────────────────────────────
+echo ""
+echo "[$(date)] Writing run log"
+
+LOG_FILE="${AGGREGATE_ROOT}/${BATCH_NAME}/run_log.txt"
+
+python3 - <<PYEOF
+import os, csv
+from datetime import datetime
+
+batch_name   = "${BATCH_NAME}"
+results_dir  = "${RESULTS_DIR}"
+acc_file     = "${ACC_FILE}"
+metadata_file= "${METADATA_FILE}"
+log_file     = "${LOG_FILE}"
+aggregate_root = "${AGGREGATE_ROOT}"
+
+# Freyja barcode version — use mtime of curated_lineages.json
+barcode_path = "/opt/anaconda3/envs/freyja-env/lib/python3.13/site-packages/freyja/data/curated_lineages.json"
+try:
+    barcode_mtime = datetime.fromtimestamp(os.path.getmtime(barcode_path))
+    barcode_version = barcode_mtime.strftime("%Y-%m-%d")
+except:
+    barcode_version = "unknown"
+
+# Read accessions for this batch
+accessions = []
+try:
+    with open(acc_file) as f:
+        for line in f:
+            acc = line.strip().replace('\r','')
+            if acc and not acc.startswith('#'):
+                accessions.append(acc)
+except:
+    pass
+
+# Read per-sample results
+sample_results = []
+for acc in accessions:
+    tsv = os.path.join(results_dir, acc, f"{acc}.freyja.tsv")
+    result = {"sample": acc, "coverage": "n/a", "resid": "n/a", "summarized": "n/a", "status": "not processed"}
+    if os.path.isfile(tsv):
+        with open(tsv) as f:
+            data = {}
+            for line in f:
+                parts = line.strip().split('\t')
+                if len(parts) == 2:
+                    data[parts[0]] = parts[1]
+        result["coverage"] = f"{float(data.get('coverage', 0)):.1f}%"
+        result["resid"]    = f"{float(data.get('resid', 0)):.2f}"
+        result["summarized"] = data.get("summarized", "n/a")
+        resid_val = float(data.get("resid", 0))
+        cov_val   = float(data.get("coverage", 0))
+        if resid_val > 10:
+            result["status"] = "WARNING: high resid"
+        elif cov_val < 10:
+            result["status"] = "WARNING: very low coverage"
+        else:
+            result["status"] = "OK"
+    sample_results.append(result)
+
+# Write log
+with open(log_file, 'w') as f:
+    f.write("=" * 68 + "\n")
+    f.write(f"  RUN LOG — {batch_name}\n")
+    f.write("=" * 68 + "\n")
+    f.write(f"  Date           : {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+    f.write(f"  Batch name     : {batch_name}\n")
+    f.write(f"  Accession file : {os.path.basename(acc_file)}\n")
+    f.write(f"  Metadata file  : {os.path.basename(metadata_file) if metadata_file else 'none'}\n")
+    f.write(f"  Freyja barcodes: {barcode_version}\n")
+    f.write(f"  Primer BED     : ARTIC_V5.3.2.bed\n")
+    f.write(f"  Samples        : {len(accessions)}\n")
+    f.write("\n")
+    f.write("-" * 68 + "\n")
+    f.write(f"  {'Sample':<18} {'Coverage':>10} {'Resid':>8}  Status\n")
+    f.write("-" * 68 + "\n")
+    for r in sample_results:
+        f.write(f"  {r['sample']:<18} {r['coverage']:>10} {r['resid']:>8}  {r['status']}\n")
+    f.write("-" * 68 + "\n")
+    warnings = [r for r in sample_results if r['status'].startswith('WARNING')]
+    f.write(f"\n  {len(warnings)} sample(s) flagged\n")
+    if warnings:
+        for r in warnings:
+            f.write(f"    {r['sample']}: {r['status']}\n")
+    f.write("\n")
+    f.write(f"  Outputs: {aggregate_root}/{batch_name}/\n")
+    f.write("=" * 68 + "\n")
+
+print(open(log_file).read())
+PYEOF
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 echo ""
 echo "All done."
 echo "  Per-batch results : ${AGGREGATE_ROOT}/${BATCH_NAME}/"
 echo "  All-batches results: ${AGGREGATE_ROOT}/all_batches/"
+echo "  Run log           : ${AGGREGATE_ROOT}/${BATCH_NAME}/run_log.txt"
