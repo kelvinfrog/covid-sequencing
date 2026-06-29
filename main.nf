@@ -184,7 +184,9 @@ process FREYJA_DEMIX {
     """
     freyja demix ${variants} ${depths} \
         --output ${accession}.freyja.tsv \
-        --confirmedonly
+        --confirmedonly \
+        --eps 0.01 \
+        --covcut 10
     """
 }
 

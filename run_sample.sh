@@ -113,7 +113,9 @@ freyja demix \
     "${SAMPLE_DIR}/variants/${SAMPLE}.tsv" \
     "${SAMPLE_DIR}/variants/${SAMPLE}.depths.tsv" \
     --output "${SAMPLE_DIR}/${SAMPLE}.freyja.tsv" \
-    --confirmedonly
+    --confirmedonly \
+    --eps 0.01 \
+    --covcut 10
 
 echo "[$(date)] Done. Results → ${SAMPLE_DIR}/${SAMPLE}.freyja.tsv"
 echo ""
