@@ -228,11 +228,40 @@ try:
 except:
     pass
 
+# Quality thresholds (from collaborator, item 3)
+MIN_COVERAGE_BREADTH   = 60.0   # % of genome with any coverage
+MIN_COVERAGE_10X       = 60.0   # % of genome at >=10x depth
+MIN_MEAN_DEPTH         = 10.0   # mean read depth across genome
+
+def parse_depths(depths_file):
+    """Return (breadth_pct, breadth_10x_pct, mean_depth) from a freyja depths file.
+    Depths file columns: chrom, pos, base, depth"""
+    depths = []
+    try:
+        with open(depths_file) as f:
+            for line in f:
+                parts = line.strip().split('\t')
+                if len(parts) >= 4:
+                    depths.append(int(parts[3]))
+    except:
+        return None, None, None
+    if not depths:
+        return None, None, None
+    total = len(depths)
+    breadth     = sum(1 for d in depths if d > 0)  / total * 100
+    breadth_10x = sum(1 for d in depths if d >= 10) / total * 100
+    mean_depth  = sum(depths) / total
+    return breadth, breadth_10x, mean_depth
+
 # Read per-sample results
 sample_results = []
 for acc in accessions:
-    tsv = os.path.join(results_dir, acc, f"{acc}.freyja.tsv")
-    result = {"sample": acc, "coverage": "n/a", "resid": "n/a", "summarized": "n/a", "status": "not processed"}
+    tsv        = os.path.join(results_dir, acc, f"{acc}.freyja.tsv")
+    depths_tsv = os.path.join(results_dir, acc, "variants", f"{acc}.depths.tsv")
+    result = {
+        "sample": acc, "coverage": "n/a", "cov_10x": "n/a",
+        "mean_depth": "n/a", "resid": "n/a", "status": "not processed"
+    }
     if os.path.isfile(tsv):
         with open(tsv) as f:
             data = {}
@@ -240,24 +269,36 @@ for acc in accessions:
                 parts = line.strip().split('\t')
                 if len(parts) == 2:
                     data[parts[0]] = parts[1]
-        result["coverage"] = f"{float(data.get('coverage', 0)):.1f}%"
-        result["resid"]    = f"{float(data.get('resid', 0)):.2f}"
-        result["summarized"] = data.get("summarized", "n/a")
-        resid_val = float(data.get("resid", 0))
-        cov_val   = float(data.get("coverage", 0))
-        if resid_val > 10:
-            result["status"] = "WARNING: high resid"
-        elif cov_val < 10:
-            result["status"] = "WARNING: very low coverage"
+        cov_val   = float(data.get('coverage', 0))
+        resid_val = float(data.get('resid', 0))
+        result["coverage"] = f"{cov_val:.1f}%"
+        result["resid"]    = f"{resid_val:.2f}"
+
+        breadth, breadth_10x, mean_depth = parse_depths(depths_tsv)
+        if breadth_10x is not None:
+            result["cov_10x"]    = f"{breadth_10x:.1f}%"
+            result["mean_depth"] = f"{mean_depth:.1f}x"
         else:
-            result["status"] = "OK"
+            breadth_10x = cov_val   # fall back to breadth if depths missing
+            mean_depth  = 0.0
+
+        fails = []
+        if cov_val      < MIN_COVERAGE_BREADTH: fails.append(f"breadth {cov_val:.0f}%<{MIN_COVERAGE_BREADTH:.0f}%")
+        if breadth_10x  < MIN_COVERAGE_10X:     fails.append(f"10x {breadth_10x:.0f}%<{MIN_COVERAGE_10X:.0f}%")
+        if mean_depth   < MIN_MEAN_DEPTH:        fails.append(f"depth {mean_depth:.1f}x<{MIN_MEAN_DEPTH:.0f}x")
+        if resid_val    > 10:                    fails.append(f"resid {resid_val:.1f}>10")
+
+        if fails:
+            result["status"] = "FAIL: " + ", ".join(fails)
+        else:
+            result["status"] = "PASS"
     sample_results.append(result)
 
 # Write log
 with open(log_file, 'w') as f:
-    f.write("=" * 68 + "\n")
+    f.write("=" * 78 + "\n")
     f.write(f"  RUN LOG — {batch_name}\n")
-    f.write("=" * 68 + "\n")
+    f.write("=" * 78 + "\n")
     f.write(f"  Date           : {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
     f.write(f"  Batch name     : {batch_name}\n")
     f.write(f"  Accession file : {os.path.basename(acc_file)}\n")
@@ -265,21 +306,25 @@ with open(log_file, 'w') as f:
     f.write(f"  Freyja barcodes: {barcode_version}\n")
     f.write(f"  Primer BED     : ARTIC_V5.3.2.bed\n")
     f.write(f"  Samples        : {len(accessions)}\n")
+    f.write(f"\n")
+    f.write(f"  QC thresholds  : breadth ≥{MIN_COVERAGE_BREADTH:.0f}%  |  10x breadth ≥{MIN_COVERAGE_10X:.0f}%  |  mean depth ≥{MIN_MEAN_DEPTH:.0f}x  |  resid ≤10\n")
     f.write("\n")
-    f.write("-" * 68 + "\n")
-    f.write(f"  {'Sample':<18} {'Coverage':>10} {'Resid':>8}  Status\n")
-    f.write("-" * 68 + "\n")
+    f.write("-" * 78 + "\n")
+    f.write(f"  {'Sample':<18} {'Breadth':>8} {'10x Brd':>8} {'MeanDep':>8} {'Resid':>6}  Result\n")
+    f.write("-" * 78 + "\n")
     for r in sample_results:
-        f.write(f"  {r['sample']:<18} {r['coverage']:>10} {r['resid']:>8}  {r['status']}\n")
-    f.write("-" * 68 + "\n")
-    warnings = [r for r in sample_results if r['status'].startswith('WARNING')]
-    f.write(f"\n  {len(warnings)} sample(s) flagged\n")
-    if warnings:
-        for r in warnings:
+        f.write(f"  {r['sample']:<18} {r['coverage']:>8} {r['cov_10x']:>8} {r['mean_depth']:>8} {r['resid']:>6}  {r['status']}\n")
+    f.write("-" * 78 + "\n")
+    passed = [r for r in sample_results if r['status'] == 'PASS']
+    failed = [r for r in sample_results if r['status'].startswith('FAIL')]
+    f.write(f"\n  {len(passed)} PASS  |  {len(failed)} FAIL\n")
+    if failed:
+        f.write(f"\n  Samples below QC thresholds (do not report lineages):\n")
+        for r in failed:
             f.write(f"    {r['sample']}: {r['status']}\n")
     f.write("\n")
     f.write(f"  Outputs: {aggregate_root}/{batch_name}/\n")
-    f.write("=" * 68 + "\n")
+    f.write("=" * 78 + "\n")
 
 print(open(log_file).read())
 PYEOF
