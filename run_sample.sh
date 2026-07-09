@@ -73,6 +73,10 @@ minimap2 \
 
 samtools index "${SAMPLE_DIR}/aligned/${SAMPLE}.sorted.bam"
 
+# Trimmed FASTQ was only needed for alignment — drop it to save disk space.
+# The fastp JSON/HTML QC reports (small) are kept.
+rm -f "${SAMPLE_DIR}/trimmed/${SAMPLE}_R1.fastq.gz" "${SAMPLE_DIR}/trimmed/${SAMPLE}_R2.fastq.gz"
+
 # ── Step 3: Primer trimming with ivar ────────────────────────────────────────
 echo "[$(date)] Step 3/6 — Primer trimming (ivar trim)"
 ivar trim \

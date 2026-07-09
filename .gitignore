@@ -31,3 +31,21 @@ nextflow
 
 # macOS
 .DS_Store
+
+# CDC wastewater surveillance site code mapping — not public data
+cdc_site_code.csv
+
+# AWS test outputs — contain real site names via ANNOTATE_SITE_DATE, not public data
+aws_test_results/
+
+# SSH private keys — never commit
+*.pem
+
+# R session junk
+.Rhistory
+
+# Office lock files
+~$*.docx
+
+# Generated README duplicate (source of truth is README.md)
+README.html
